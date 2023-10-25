@@ -52,7 +52,7 @@ Mkfile.old
 dkms.conf
 
 # Test files
-*.txt
+#*.txt
 
 # VS Code files
 .vscode

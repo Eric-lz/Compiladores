@@ -1,0 +1,29 @@
+int float bool
+if else while 
+return
+true
+
+// comentario
+////// 123 abc
+
+identificador
+_var
+_c99
+______1
+
+/* comentario
+multi
+linha
+*/
+/***aaa***/
+/*
+int while return
+var __
+*/
+
+>= <= ==
+!= | &
+
+13254 0359
+34.2   .50
+

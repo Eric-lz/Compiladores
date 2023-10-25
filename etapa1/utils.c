@@ -1,5 +1,5 @@
-extern int line_number;
+extern int yylineno;
 int get_line_number(void)
 {
-	return line_number;
+	return yylineno;
 }

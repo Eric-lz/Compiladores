@@ -1,7 +1,6 @@
 %{
 
 #include "tokens.h"
-int line_number = 1;
 
 %}
 
@@ -14,6 +13,7 @@ NEW_LINE ("\r\n"|"\n")
 
 %x COMMENTS
 
+
 %option yylineno
 %option noyywrap
 
@@ -22,8 +22,13 @@ NEW_LINE ("\r\n"|"\n")
 "//".* ;
 
 "/*" BEGIN(COMMENTS);
-
-{NEW_LINE} { line_number++; }
+<COMMENTS>
+{
+<<EOF>> { return TK_ERRO; }
+"*/" BEGIN(0);
+}
+<COMMENTS>\n { }
+<COMMENTS>. { }
 
 {WHITE} ;
 
@@ -65,13 +70,8 @@ NEW_LINE ("\r\n"|"\n")
 
 {IDENT} { return TK_IDENTIFICADOR; }
 
-<COMMENTS>
-{
-<<EOF>> { return TK_ERRO; }
-{NEW_LINE} { line_number++; } 
-"*/" BEGIN(0);
-}
-
 . { return TK_ERRO; }
+
+\n { }
 
 %%

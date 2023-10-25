@@ -11,6 +11,10 @@ etapa1: $(OBJ)
 
 flex:
 	flex scanner.l
+	$(CC) -c lex.yy.c $(CFLAGS)
+
+test: etapa1
+	./etapa1 < test.txt > output.txt
 
 clean:
-	rm *.o etapa1
+	rm *.o lex.yy.c etapa1
