@@ -14,6 +14,7 @@ NEW_LINE ("\r\n"|"\n")
 
 %x COMMENTS
 
+%option yylineno
 %option noyywrap
 
 %%
@@ -25,8 +26,6 @@ NEW_LINE ("\r\n"|"\n")
 {NEW_LINE} { line_number++; }
 
 {WHITE} ;
-  
-{SPECIAL} { return yytext[0]; }
 
 "<=" { return TK_OC_LE; }
 
@@ -35,6 +34,8 @@ NEW_LINE ("\r\n"|"\n")
 "==" { return TK_OC_EQ; }
 
 "!=" { return TK_OC_NE; }
+
+{SPECIAL} { return yytext[0]; }
 
 "&" { return TK_OC_AND; }
 
@@ -62,7 +63,6 @@ NEW_LINE ("\r\n"|"\n")
 
 {INT} { return TK_LIT_INT; }
 
-
 {IDENT} { return TK_IDENTIFICADOR; }
 
 <COMMENTS>
@@ -75,4 +75,3 @@ NEW_LINE ("\r\n"|"\n")
 . { return TK_ERRO; }
 
 %%
-
