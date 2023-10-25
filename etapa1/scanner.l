@@ -1,69 +1,78 @@
 %{
 
 #include "tokens.h"
+int line_number = 1;
 
 %}
 
-white [ \t]+
-minusculo_ [a-z_]
-digito [0-9]
+INT [0-9]+
+FLOAT [0-9]*\.[0-9]+
+IDENT [_a-z][_a-z0-9]*
+SPECIAL [-+!*/%<>{}()=,;]
+WHITE [ \t]+
+NEW_LINE ("\r\n"|"\n")
+
+%x COMMENTS
 
 %option noyywrap
 
 %%
 
-{white} { }
+"//".* ;
+
+"/*" BEGIN(COMMENTS);
+
+{NEW_LINE} { line_number++; }
+
+{WHITE} ;
   
-\; { return ';'; }
-  
-\, { return ','; }
- 
-\( { return '('; }
- 
-\) { return ')'; }
+{SPECIAL} { return yytext[0]; }
 
-\! { return '!'; }
- 
-\* { return '*'; }
- 
-\/ { return '/'; }
+"<=" { return TK_OC_LE; }
 
-\% { return '%'; }
-  
-\+ { return '+'; }
- 
-\- { return '-'; }
- 
-\< { return '<'; }
+">=" { return TK_OC_GE; }
 
-\> { return '>'; }
+"==" { return TK_OC_EQ; }
 
-\{ { return '{'; }
-  
-\} { return '}'; }
- 
-\= { return '='; }
- 
-int { return TK_PR_INT; }
+"!=" { return TK_OC_NE; }
 
-float { return TK_PR_FLOAT; }
+"&" { return TK_OC_AND; }
 
-bool { return TK_PR_BOOL; }
+"|" { return TK_OC_OR; }
 
-if { return TK_PR_IF; }
+"int" { return TK_PR_INT; }
 
-else { return TK_PR_ELSE; }  
+"float" { return TK_PR_FLOAT; }
 
-while { return TK_PR_WHILE; }
+"bool" { return TK_PR_BOOL; }
 
-return { return TK_PR_RETURN; }
+"if" { return TK_PR_IF; }
 
-{digito}*({digito}\.{digito}|\.{digito}){digito}* { return TK_LIT_FLOAT; }
+"else" { return TK_PR_ELSE; }  
 
-{digito}+ { return TK_LIT_INT; }
+"while" { return TK_PR_WHILE; }
 
-{minusculo_}({minusculo_}|{digito})* { return TK_IDENTIFICADOR; }
+"return" { return TK_PR_RETURN; }
+
+"true" { return TK_LIT_TRUE; }
+
+"false" { return TK_LIT_FALSE; }
+
+{FLOAT} { return TK_LIT_FLOAT; }
+
+{INT} { return TK_LIT_INT; }
+
+
+{IDENT} { return TK_IDENTIFICADOR; }
+
+<COMMENTS>
+{
+<<EOF>> { return TK_ERRO; }
+{NEW_LINE} { line_number++; } 
+"*/" BEGIN(0);
+}
 
 . { return TK_ERRO; }
- 
+
 %%
+

@@ -1,4 +1,5 @@
+extern int line_number;
 int get_line_number(void)
 {
-	return 0;
+	return line_number;
 }
