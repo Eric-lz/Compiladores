@@ -1,0 +1,3 @@
+int oi, score, teste;
+bool tchau, x;
+float
