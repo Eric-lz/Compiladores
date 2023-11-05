@@ -1,3 +1,5 @@
 int oi, score, teste;
 bool tchau, x;
-float
+float bola;
+
+(int param) >= int ! funcao;

@@ -35,15 +35,22 @@ funções. Esses elementos podem estar intercala-
 dos e em qualquer ordem.
 */
 
+// Programa = lista de elementos (pode ser vazia)
 programa: lista | /* vazio */ ;
 lista: lista elemento | elemento;
 elemento: funcao | decl_global;
 
-funcao: cabecalho corpo;
-cabecalho: '(' ls_parametros ')'
+// Definicao de Funcoes
+// Funcao = cabecalho + corpo
+// Cabecalho = lista de parametros >= tipo de retorno ! nome da funcao
+// Corpo = bloco de comandos
+funcao: cabecalho /*corpo*/;
+cabecalho: '(' ls_parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR;
 ls_parametros: parametro | parametro ',' ls_parametros | /* vazio */;
 parametro: tipo TK_IDENTIFICADOR;
 
+// Declaracao de variavel global
+// tipo + lista de identificadores;
 decl_global: tipo TK_IDENTIFICADOR ls_nomes;
 tipo: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
 ls_nomes: ',' TK_IDENTIFICADOR ls_nomes | ';';

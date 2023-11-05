@@ -15,7 +15,7 @@ flex: scanner.l bison
 	flex scanner.l
 
 test: etapa2
-	./etapa2 < test.txt > output.txt
+	./etapa2 < input.txt
 
 clean:
 	rm -f *.o lex.yy.c parser.tab.* etapa2
