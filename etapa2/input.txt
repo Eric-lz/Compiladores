@@ -2,4 +2,25 @@ int oi, score, teste;
 bool tchau, x;
 float bola;
 
-(int param) >= int ! funcao;
+(int param) >= int ! funcao{
+  return +;
+
+  int var, bla, ola;
+  float x, y, z;
+  bool eee;
+
+  if(+){
+    return +;
+  };
+
+  if(+){
+    return +;
+  }
+  else {
+    return +;
+  };
+
+  while(+){
+    return +;
+  };
+}
