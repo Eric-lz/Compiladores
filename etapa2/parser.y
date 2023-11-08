@@ -46,18 +46,18 @@ elemento: funcao | decl_global;
 // Corpo = bloco de comandos
 funcao: cabecalho corpo;
 cabecalho: '(' ls_parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR;
-ls_parametros: parametro | parametro ',' ls_parametros | /* vazio */;
+ls_parametros: ls_parametros ',' parametro | parametro | /* vazio */;
 parametro: tipo TK_IDENTIFICADOR;
 corpo: bloco;
 
 // Declaracao de variavel global
 // tipo + lista de identificadores;
-decl_global: tipo TK_IDENTIFICADOR ls_nomes;
+decl_global: tipo ls_global ';';
 tipo: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
-ls_nomes: ',' TK_IDENTIFICADOR ls_nomes | ';';
+ls_global: ls_global ',' TK_IDENTIFICADOR | TK_IDENTIFICADOR;
 
 // Declaracao de variavel local
-// tipo + lista de identificadores;
+// tipo + lista de identificadores
 decl_var: tipo TK_IDENTIFICADOR ls_var;
 ls_var: ls_var ',' TK_IDENTIFICADOR | /* vazio */;
 

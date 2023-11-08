@@ -2,7 +2,7 @@ int oi, score, teste;
 bool tchau, x;
 float bola;
 
-(int param) >= int ! funcao{
+(int param, float par, bool test) >= int ! funcao{
   return +;
 
   int var, bla, ola;
