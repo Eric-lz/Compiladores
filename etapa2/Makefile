@@ -9,7 +9,7 @@ all: $(OBJ)
 	$(CC) -o etapa2 $^ $(CFLAGS)
 
 bison: parser.y
-	bison -d parser.y
+	bison -d parser.y --report=all --report-file=parser.output
 
 flex: scanner.l bison
 	flex scanner.l
@@ -18,4 +18,4 @@ test: etapa2
 	./etapa2 < input.txt
 
 clean:
-	rm -f *.o lex.yy.c parser.tab.* etapa2
+	rm -f *.o lex.yy.c parser.tab.* etapa2 *.output
