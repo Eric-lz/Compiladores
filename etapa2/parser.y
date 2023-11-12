@@ -1,11 +1,16 @@
-// Eric Peracchi Pisoni - 00318500
-// Pedro Arejano S - 
+/*
+Grupo E
+Eric Peracchi Pisoni - 00318500
+Pedro Arejano Scheunemann - 00335768
+*/
 
 %{
+
 int yylex(void);
 void yyerror (char const *mensagem);
 
 %}
+
 %define parse.error verbose
 
 %token TK_PR_INT
@@ -30,76 +35,70 @@ void yyerror (char const *mensagem);
 
 %%
 
-/* 
-Um programa na linguagem é composto por dois
-elementos, todos opcionais: um conjunto de de-
-clarações de variáveis globais e um conjunto de
-funções. Esses elementos podem estar intercala-
-dos e em qualquer ordem.
-*/
-
 // Programa = lista de elementos (pode ser vazia)
 programa: lista | /* vazio */ ;
 lista: lista elemento | elemento;
-elemento: funcao | decl_global;
-
-// Definicao de Funcoes
-// Funcao = cabecalho + corpo
-// Cabecalho = lista de parametros >= tipo de retorno ! nome da funcao
-// Corpo = bloco de comandos
-funcao: cabecalho corpo;
-cabecalho: '(' ls_parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR;
-ls_parametros: ls_parametros ',' parametro | parametro | /* vazio */;
-parametro: tipo TK_IDENTIFICADOR;
-corpo: bloco;
+elemento: decl_global | funcao;
 
 // Declaracao de variavel global
 // tipo + lista de identificadores + ;
-decl_global: tipo ls_global ';';
+decl_global: tipo ls_var ';';
+ls_var: ls_var ',' TK_IDENTIFICADOR | TK_IDENTIFICADOR;
+
+// Definicao de Funcoes
+// Funcao = cabecalho + corpo
+// Cabecalho = (lista de parametros) >= tipo de retorno ! nome da funcao
+// Corpo = bloco de comandos
+funcao: cabecalho corpo;
+cabecalho: '(' parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR;
+parametros: ls_parametros | /* vazio */;
+ls_parametros: ls_parametros ',' param | param;
+param: tipo TK_IDENTIFICADOR;
 tipo: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
-ls_global: ls_global ',' TK_IDENTIFICADOR | TK_IDENTIFICADOR;
+corpo: bloco;
+
+// Bloco de comandos
+// { lista de comandos simples; } (pode ser vazia)
+bloco: '{' ls_comandos '}' ;
+ls_comandos: ls_comandos comando ';' | /* vazio */;
+comando: decl_local | atribuicao | chamada_func | retorno | controle_fluxo;
 
 // Declaracao de variavel local
 // tipo + lista de identificadores
-decl_var: tipo TK_IDENTIFICADOR ls_var;
-ls_var: ls_var ',' TK_IDENTIFICADOR | /* vazio */;
-
-// Bloco de comandos
-// { lista de comandos simples; }
-bloco: '{' ls_comandos '}' ;
-ls_comandos: ls_comandos comando ';' | /* vazio */;
-comando: decl_var;
-comando: atribuicao;
-comando: chamada_func;
-comando: retorno;
-comando: controle_fluxo;
-comando: /* vazio */;
-
-// Chamada de funcao
-chamada_func: nome_func argumentos;
-nome_func: TK_IDENTIFICADOR;
-argumentos: '(' ls_argumentos ')';
-ls_argumentos: expressao;
-ls_argumentos: ls_argumentos ',' arg | arg | /* vazio */;
-arg: TK_IDENTIFICADOR;
+decl_local: tipo ls_var;
 
 // Atribuicao
-atribuicao: TK_IDENTIFICADOR TK_OC_EQ expressao;
+atribuicao: TK_IDENTIFICADOR TK_OC_EQ expr;
+
+// Chamada de funcao
+chamada_func: TK_IDENTIFICADOR '(' argumentos ')';
+argumentos: ls_argumentos | /* vazio */;
+ls_argumentos: ls_argumentos ',' arg | arg;
+arg: TK_IDENTIFICADOR | expressao;
 
 // Retorno
-retorno: TK_PR_RETURN expressao;
+retorno: TK_PR_RETURN expr;
 
 // Controle de fluxo
 controle_fluxo: while | if;
 
 // Repeticao while
-while: TK_PR_WHILE '(' expressao ')' bloco;
+while: TK_PR_WHILE '(' expr ')' bloco;
 
 // Condicional if
-if: TK_PR_IF '(' expressao ')' bloco else;
+if: TK_PR_IF '(' expr ')' bloco else;
 else: TK_PR_ELSE bloco | /* vazio */;
 
-// Expressoes (TODO)
-expressao: '+' /**/;
+// Expressoes 
+expr: '-' expr | '!' expr | expr_p2;
+expr_p2: expr_p2 '*' expr_p3 | expr_p2 '/' expr_p3 | expr_p2 '%' expr_p3 | expr_p3;
+expr_p3: expr_p3 '+' expr_p4 | expr_p3 '-' expr_p4 | expr_p4;
+expr_p4: expr_p4 '<' expr_p5 | expr_p4 '>' expr_p5 | expr_p4 TK_OC_LE expr_p5 | expr_p4 TK_OC_GE expr_p5 | expr_p5;
+expr_p5: expr_p5 TK_OC_EQ expr_p6 | expr_p5 TK_OC_NE expr_p6 | expr_p6;
+expr_p6: expr_p6 TK_OC_AND expr_p7 | expr_p7;
+expr_p7: expr_p7 TK_OC_OR expr_p8 | expr_p8;
+expr_p8: '(' expr ')' | TK_IDENTIFICADOR | literal | chamada_func;
+
+literal: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_TRUE | TK_LIT_FALSE;
 
 %%
