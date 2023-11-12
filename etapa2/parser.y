@@ -1,3 +1,6 @@
+// Eric Peracchi Pisoni - 00318500
+// Pedro Arejano S - 
+
 %{
 int yylex(void);
 void yyerror (char const *mensagem);
@@ -51,7 +54,7 @@ parametro: tipo TK_IDENTIFICADOR;
 corpo: bloco;
 
 // Declaracao de variavel global
-// tipo + lista de identificadores;
+// tipo + lista de identificadores + ;
 decl_global: tipo ls_global ';';
 tipo: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
 ls_global: ls_global ',' TK_IDENTIFICADOR | TK_IDENTIFICADOR;
@@ -66,9 +69,9 @@ ls_var: ls_var ',' TK_IDENTIFICADOR | /* vazio */;
 bloco: '{' ls_comandos '}' ;
 ls_comandos: ls_comandos comando ';' | /* vazio */;
 comando: decl_var;
-comando: TK_IDENTIFICADOR TK_OC_EQ expressao;
+comando: atribuicao;
 comando: chamada_func;
-comando: TK_PR_RETURN expressao;
+comando: retorno;
 comando: controle_fluxo;
 comando: /* vazio */;
 
@@ -80,15 +83,23 @@ ls_argumentos: expressao;
 ls_argumentos: ls_argumentos ',' arg | arg | /* vazio */;
 arg: TK_IDENTIFICADOR;
 
+// Atribuicao
+atribuicao: TK_IDENTIFICADOR TK_OC_EQ expressao;
+
+// Retorno
+retorno: TK_PR_RETURN expressao;
+
 // Controle de fluxo
+controle_fluxo: while | if;
+
 // Repeticao while
-controle_fluxo: TK_PR_WHILE '(' expressao ')' bloco;
+while: TK_PR_WHILE '(' expressao ')' bloco;
 
 // Condicional if
-controle_fluxo: TK_PR_IF '(' expressao ')' bloco else;
+if: TK_PR_IF '(' expressao ')' bloco else;
 else: TK_PR_ELSE bloco | /* vazio */;
 
-// Expressoes
+// Expressoes (TODO)
 expressao: '+' /**/;
 
 %%

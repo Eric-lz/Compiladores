@@ -9,6 +9,10 @@ float bola;
   float x, y, z;
   bool eee;
 
+  chamada();
+  argumento(arg);
+  arg(arg1, arg2, arg3,arg4);
+
   if(+){
     return +;
   };
