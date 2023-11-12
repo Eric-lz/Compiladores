@@ -68,7 +68,7 @@ comando: decl_local | atribuicao | chamada_func | retorno | controle_fluxo;
 decl_local: tipo ls_var;
 
 // Atribuicao
-atribuicao: TK_IDENTIFICADOR TK_OC_EQ expr;
+atribuicao: TK_IDENTIFICADOR '=' expr;
 
 // Chamada de funcao
 chamada_func: TK_IDENTIFICADOR '(' argumentos ')';
