@@ -13,7 +13,7 @@ float bola;
   argumento(arg);
   arg(arg1, arg2, arg3,arg4);
 
-  var = -2;
+  var = -(-2/-6*7);
 
   if(var == -5){
     return 0;
@@ -44,7 +44,7 @@ float bola;
 
   int var;
   var = pos & con;
-  var = num/(num2*num3-func());
+  var = num/-(num2*num3-func());
   var = !true;
   var = num > pos;
   var = -5;

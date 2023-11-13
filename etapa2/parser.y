@@ -90,13 +90,13 @@ if: TK_PR_IF '(' expr ')' bloco else;
 else: TK_PR_ELSE bloco | /* vazio */;
 
 // Expressoes 
-expr: '-' expr | '!' expr | expr_p2;
-expr_p2: expr_p2 '*' expr_p3 | expr_p2 '/' expr_p3 | expr_p2 '%' expr_p3 | expr_p3;
-expr_p3: expr_p3 '+' expr_p4 | expr_p3 '-' expr_p4 | expr_p4;
+expr: expr TK_OC_OR expr_p2 | expr_p2;
+expr_p2: expr_p2 TK_OC_AND expr_p3 | expr_p3;
+expr_p3: expr_p3 TK_OC_EQ expr_p4 | expr_p3 TK_OC_NE expr_p4 | expr_p4;
 expr_p4: expr_p4 '<' expr_p5 | expr_p4 '>' expr_p5 | expr_p4 TK_OC_LE expr_p5 | expr_p4 TK_OC_GE expr_p5 | expr_p5;
-expr_p5: expr_p5 TK_OC_EQ expr_p6 | expr_p5 TK_OC_NE expr_p6 | expr_p6;
-expr_p6: expr_p6 TK_OC_AND expr_p7 | expr_p7;
-expr_p7: expr_p7 TK_OC_OR expr_p8 | expr_p8;
+expr_p5: expr_p5 '+' expr_p6 | expr_p5 '-' expr_p6 | expr_p6;
+expr_p6: expr_p6 '*' expr_p7 | expr_p6 '/' expr_p7 | expr_p6 '%' expr_p7 | expr_p7;
+expr_p7: '-' expr_p7 | '!' expr_p7 | expr_p8;
 expr_p8: '(' expr ')' | TK_IDENTIFICADOR | literal | chamada_func;
 
 literal: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_TRUE | TK_LIT_FALSE;
