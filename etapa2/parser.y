@@ -74,7 +74,7 @@ atribuicao: TK_IDENTIFICADOR '=' expr;
 chamada_func: TK_IDENTIFICADOR '(' argumentos ')';
 argumentos: ls_argumentos | /* vazio */;
 ls_argumentos: ls_argumentos ',' arg | arg;
-arg: TK_IDENTIFICADOR | expr;
+arg: expr;
 
 // Retorno
 retorno: TK_PR_RETURN expr;
