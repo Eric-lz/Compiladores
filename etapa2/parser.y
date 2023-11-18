@@ -61,7 +61,7 @@ corpo: bloco;
 // { lista de comandos simples; } (pode ser vazia)
 bloco: '{' ls_comandos '}' ;
 ls_comandos: ls_comandos comando ';' | /* vazio */;
-comando: decl_local | atribuicao | chamada_func | retorno | controle_fluxo;
+comando: decl_local | atribuicao | chamada_func | retorno | controle_fluxo | bloco;
 
 // Declaracao de variavel local
 // tipo + lista de identificadores
