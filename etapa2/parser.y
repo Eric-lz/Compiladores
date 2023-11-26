@@ -61,20 +61,20 @@ corpo: bloco;
 // { lista de comandos simples; } (pode ser vazia)
 bloco: '{' ls_comandos '}' ;
 ls_comandos: ls_comandos comando ';' | /* vazio */;
-comando: decl_local | atribuicao | chamada_func | retorno | controle_fluxo;
+comando: decl_local | atribuicao | chamada_func | retorno | controle_fluxo | bloco;
 
 // Declaracao de variavel local
 // tipo + lista de identificadores
 decl_local: tipo ls_var;
 
 // Atribuicao
-atribuicao: TK_IDENTIFICADOR TK_OC_EQ expr;
+atribuicao: TK_IDENTIFICADOR '=' expr;
 
 // Chamada de funcao
 chamada_func: TK_IDENTIFICADOR '(' argumentos ')';
 argumentos: ls_argumentos | /* vazio */;
 ls_argumentos: ls_argumentos ',' arg | arg;
-arg: TK_IDENTIFICADOR | expr;
+arg: expr;
 
 // Retorno
 retorno: TK_PR_RETURN expr;
@@ -89,16 +89,25 @@ while: TK_PR_WHILE '(' expr ')' bloco;
 if: TK_PR_IF '(' expr ')' bloco else;
 else: TK_PR_ELSE bloco | /* vazio */;
 
-// Expressoes 
-expr: '-' expr | '!' expr | expr_p2;
-expr_p2: expr_p2 '*' expr_p3 | expr_p2 '/' expr_p3 | expr_p2 '%' expr_p3 | expr_p3;
-expr_p3: expr_p3 '+' expr_p4 | expr_p3 '-' expr_p4 | expr_p4;
-expr_p4: expr_p4 '<' expr_p5 | expr_p4 '>' expr_p5 | expr_p4 TK_OC_LE expr_p5 | expr_p4 TK_OC_GE expr_p5 | expr_p5;
-expr_p5: expr_p5 TK_OC_EQ expr_p6 | expr_p5 TK_OC_NE expr_p6 | expr_p6;
-expr_p6: expr_p6 TK_OC_AND expr_p7 | expr_p7;
-expr_p7: expr_p7 TK_OC_OR expr_p8 | expr_p8;
-expr_p8: '(' expr ')' | TK_IDENTIFICADOR | literal | chamada_func;
+// Expressoes
+expr:   expr  or      expr2 | expr2;
+expr2:  expr2 and     expr3 | expr3;
+expr3:  expr3 igual   expr4 | expr4;
+expr4:  expr4 compara expr5 | expr5;
+expr5:  expr5 addsub  expr6 | expr6;
+expr6:  expr6 muldiv  expr7 | expr7;
+expr7:  neg expr7           | expr8;
+expr8:  '(' expr ')'        | operando;
 
+operando: TK_IDENTIFICADOR | literal | chamada_func;
 literal: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_TRUE | TK_LIT_FALSE;
+
+or:       TK_OC_OR;
+and:      TK_OC_AND;
+igual:    TK_OC_EQ  | TK_OC_NE;
+compara:  '<' | '>' | TK_OC_LE | TK_OC_GE;
+addsub:   '+' | '-';
+muldiv:   '*' | '/' | '%';
+neg:      '-' | '!';
 
 %%

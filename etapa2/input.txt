@@ -3,7 +3,7 @@ bool tchau, x;
 float bola;
 
 (int param, float par, bool test) >= int ! funcao{
-  return +;
+  return 5;
 
   int var, bla, ola;
   float x, y, z;
@@ -13,18 +13,39 @@ float bola;
   argumento(arg);
   arg(arg1, arg2, arg3,arg4);
 
-  if(+){
-    return +;
+  var = -(-2/-6*7);
+
+  if(var == -5){
+    return 0;
   };
 
-  if(+){
-    return +;
+  if(var <= (-5)){
+    return 2;
+  };
+
+  if(var != 2){
+    var = chamada();
   }
   else {
-    return +;
+    return chamada();
   };
 
-  while(+){
-    return +;
+  while(func() >= 72){
+    return num;
   };
+
+  while(var == 2){
+    var = x | y;
+  };
+}
+
+(int param) >= float! func{
+  chamada();
+
+  int var;
+  var = pos & con;
+  var = num/-(num2*num3-func());
+  var = !true;
+  var = num > pos;
+  var = -5;
 }

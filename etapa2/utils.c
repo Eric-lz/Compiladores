@@ -1,3 +1,9 @@
+/*
+Grupo E
+Eric Peracchi Pisoni - 00318500
+Pedro Arejano Scheunemann - 00335768
+*/
+
 #include <stdio.h>
 
 extern int yylineno;
