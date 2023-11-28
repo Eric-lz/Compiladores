@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "asd.h"
-#define ARQUIVO_SAIDA "saida.dot"
 
 asd_tree_t *asd_new(const char *label)
 {
