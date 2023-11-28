@@ -26,8 +26,6 @@ void asd_free(asd_tree_t *tree)
     free(tree->children);
     free(tree->label);
     free(tree);
-  }else{
-    printf("Erro: %s recebeu parâmetro tree = %p.\n", __FUNCTION__, tree);
   }
 }
 
@@ -37,8 +35,6 @@ void asd_add_child(asd_tree_t *tree, asd_tree_t *child)
     tree->number_of_children++;
     tree->children = realloc(tree->children, tree->number_of_children * sizeof(asd_tree_t*));
     tree->children[tree->number_of_children-1] = child;
-  }else{
-    //printf("Erro: %s recebeu parâmetro tree = %p / %p.\n", __FUNCTION__, tree, child);
   }
 }
 
