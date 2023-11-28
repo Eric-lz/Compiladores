@@ -17,11 +17,11 @@ typedef struct asd_tree
   struct asd_tree **children;
 } asd_tree_t;
 
-asd_tree_t *asd_new(const char *label);
+asd_tree_t *astNewNode(const char *label);
 
-void asd_free(asd_tree_t *tree);
+void astFree(asd_tree_t *tree);
 
-void asd_add_child(asd_tree_t *tree, asd_tree_t *child);
+void astAddChild(asd_tree_t *tree, asd_tree_t *child);
 
 void exporta(asd_tree_t *tree);
 

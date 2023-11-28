@@ -15,7 +15,7 @@ extern void* arvore;
 
 %}
 
-%code requires { #include "asd.h" }
+%code requires { #include "ast.h" }
 
 %define parse.error verbose
 
@@ -94,7 +94,7 @@ extern void* arvore;
 programa: 					lista { $$ = $1; arvore = $$;}
 									| /* vazio */ { $$ = NULL; };
 
-lista: 							elemento lista { if($1 == NULL){ $$ = $2; }else{ $$ = $1; asd_add_child($$, $2); } }
+lista: 							elemento lista { if($1 == NULL){ $$ = $2; }else{ $$ = $1; astAddChild($$, $2); } }
 									| elemento { $$ = $1; };
 
 elemento: 					decl_global { $$ = NULL; }
@@ -109,9 +109,9 @@ ls_var: 						ls_var ',' TK_IDENTIFICADOR
 
 // Definicao de Funcoes
 
-funcao: 						cabecalho corpo { $$ = $1; asd_add_child($$, $2);};
+funcao: 						cabecalho corpo { $$ = $1; astAddChild($$, $2);};
 
-cabecalho: 					'(' parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR { $$ = asd_new(strdup($7.valor)); } ;
+cabecalho: 					'(' parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR { $$ = astNewNode(strdup($7.valor)); };
 	
 parametros: 				ls_parametros 
 									| /* vazio */;
@@ -131,7 +131,7 @@ corpo: bloco { $$ = $1; };
 
 bloco: 						'{' ls_comandos '}' { $$ = $2; }
 
-ls_comandos: 			comando ';' ls_comandos { if($1 == NULL){ $$ = $3; }else{ $$ = $1; asd_add_child($$, $3); }  } // por conta do decl_local => NULL
+ls_comandos: 			comando ';' ls_comandos { if($1 == NULL){ $$ = $3; }else{ $$ = $1; astAddChild($$, $3); }  } // por conta do decl_local => NULL
 								| /* vazio */ { $$ = NULL; };
 
 comando: 					decl_local { $$ = NULL; }
@@ -147,23 +147,23 @@ decl_local: 			tipo ls_var;
 
 // Atribuicao
 
-atribuicao: 			TK_IDENTIFICADOR '=' expr { $$ = asd_new("="); asd_add_child($$, asd_new(strdup($1.valor))); asd_add_child($$, $3); };
+atribuicao: 			TK_IDENTIFICADOR '=' expr { $$ = astNewNode("="); astAddChild($$, astNewNode(strdup($1.valor))); astAddChild($$, $3); };
 
 // Chamada de funcao
 
-chamada_func: 		TK_IDENTIFICADOR '(' argumentos ')' { char label[] = "call "; strcat(label, strdup($1.valor)); $$ = asd_new(strdup(label)); asd_add_child($$, $3); };
+chamada_func: 		TK_IDENTIFICADOR '(' argumentos ')' { char label[] = "call "; strcat(label, strdup($1.valor)); $$ = astNewNode(strdup(label)); astAddChild($$, $3); };
 
 argumentos:				ls_argumentos { $$ = $1; } 
 								| /* vazio */ { $$ = NULL; };
 
-ls_argumentos: 		arg ',' ls_argumentos { $$ = $1; asd_add_child($$, $3); }
+ls_argumentos: 		arg ',' ls_argumentos { $$ = $1; astAddChild($$, $3); }
 								| arg { $$ = $1; };
 								
 arg: 							expr { $$ = $1; };
 
 // Retorno
 
-retorno: 					TK_PR_RETURN expr { $$ = asd_new("return"); asd_add_child($$, $2); };
+retorno: 					TK_PR_RETURN expr { $$ = astNewNode("return"); astAddChild($$, $2); };
 
 // Controle de fluxo
 
@@ -172,70 +172,70 @@ controle_fluxo: 	while { $$ = $1; }
 
 // Repeticao while
 
-while: 						TK_PR_WHILE '(' expr ')' bloco { $$ = asd_new("while"); asd_add_child($$, $3); asd_add_child($$, $5); };
+while: 						TK_PR_WHILE '(' expr ')' bloco { $$ = astNewNode("while"); astAddChild($$, $3); astAddChild($$, $5); };
 
 // Condicional if
 
-if: 							TK_PR_IF '(' expr ')' bloco else { $$ = asd_new("if"); asd_add_child($$, $3); asd_add_child($$, $5); asd_add_child($$, $6); };
+if: 							TK_PR_IF '(' expr ')' bloco else { $$ = astNewNode("if"); astAddChild($$, $3); astAddChild($$, $5); astAddChild($$, $6); };
 
 else: 						TK_PR_ELSE bloco { $$ = $2; }
 								| /* vazio */ { $$ = NULL; };
 
 // Expressoes
 
-expr:   					expr or expr2 { $$ = $2; asd_add_child($$,$1); asd_add_child($$,$3); }
+expr:   					expr or expr2 { $$ = $2; astAddChild($$,$1); astAddChild($$,$3); }
 								| expr2 { $$ = $1; };
 		
-expr2: 						expr2 and expr3 { $$ = $2; asd_add_child($$,$1); asd_add_child($$,$3); }
+expr2: 						expr2 and expr3 { $$ = $2; astAddChild($$,$1); astAddChild($$,$3); }
 								| expr3 { $$ = $1; };
 	
-expr3:  					expr3 igual expr4 { $$ = $2; asd_add_child($$,$1); asd_add_child($$,$3); }
+expr3:  					expr3 igual expr4 { $$ = $2; astAddChild($$,$1); astAddChild($$,$3); }
 								| expr4 { $$ = $1; };
 	
-expr4:  					expr4 compara expr5 { $$ = $2; asd_add_child($$,$1); asd_add_child($$,$3); }
+expr4:  					expr4 compara expr5 { $$ = $2; astAddChild($$,$1); astAddChild($$,$3); }
 								| expr5 { $$ = $1; };
 	
-expr5:  					expr5 addsub expr6 { $$ = $2; asd_add_child($$,$1); asd_add_child($$,$3); }
+expr5:  					expr5 addsub expr6 { $$ = $2; astAddChild($$,$1); astAddChild($$,$3); }
 								| expr6 { $$ = $1; };
 	
-expr6:  					expr6 muldiv expr7 { $$ = $2; asd_add_child($$,$1); asd_add_child($$,$3); }
+expr6:  					expr6 muldiv expr7 { $$ = $2; astAddChild($$,$1); astAddChild($$,$3); }
 								| expr7 { $$ = $1; };
 	
-expr7:  					neg expr7 { $$ = $1; asd_add_child($$, $2); }
+expr7:  					neg expr7 { $$ = $1; astAddChild($$, $2); }
 								| expr8 { $$ = $1; };
 	
 expr8:  					'(' expr ')' { $$ = $2; }
 								| operando { $$ = $1; };
 
-operando: 				TK_IDENTIFICADOR { $$ = asd_new(strdup($1.valor)); }
+operando: 				TK_IDENTIFICADOR { $$ = astNewNode(strdup($1.valor)); }
 								| literal { $$ = $1; }
 								| chamada_func { $$ = $1; };  
 	
-literal: 					TK_LIT_INT { $$ = asd_new(strdup($1.valor)); }
-								| TK_LIT_FLOAT { $$ = asd_new(strdup($1.valor)); }
-								| TK_LIT_TRUE { $$ = asd_new(strdup($1.valor)); }
-								| TK_LIT_FALSE { $$ = asd_new(strdup(strdup($1.valor))); };
+literal: 					TK_LIT_INT { $$ = astNewNode(strdup($1.valor)); }
+								| TK_LIT_FLOAT { $$ = astNewNode(strdup($1.valor)); }
+								| TK_LIT_TRUE { $$ = astNewNode(strdup($1.valor)); }
+								| TK_LIT_FALSE { $$ = astNewNode(strdup(strdup($1.valor))); };
 
-or:       				TK_OC_OR { $$ = asd_new("|"); };
+or:       				TK_OC_OR { $$ = astNewNode("|"); };
 
-and:      				TK_OC_AND { $$ = asd_new("&"); };
+and:      				TK_OC_AND { $$ = astNewNode("&"); };
 
-igual:    				TK_OC_EQ { $$ = asd_new("=="); }
-								| TK_OC_NE { $$ = asd_new("!="); };
+igual:    				TK_OC_EQ { $$ = astNewNode("=="); }
+								| TK_OC_NE { $$ = astNewNode("!="); };
 	
-compara:  				'<' { $$ = asd_new("<"); }
-								| '>' { $$ = asd_new(">"); }
-								| TK_OC_LE { $$ = asd_new("<="); }
-								| TK_OC_GE { $$ = asd_new(">="); };
+compara:  				'<' { $$ = astNewNode("<"); }
+								| '>' { $$ = astNewNode(">"); }
+								| TK_OC_LE { $$ = astNewNode("<="); }
+								| TK_OC_GE { $$ = astNewNode(">="); };
 	
-addsub:   				'+' { $$ = asd_new("+"); }
-								| '-' { $$ = asd_new("-"); };
+addsub:   				'+' { $$ = astNewNode("+"); }
+								| '-' { $$ = astNewNode("-"); };
 	
-muldiv:   				'*' { $$ = asd_new("*"); }
-								| '/' { $$ = asd_new("/"); }
-								| '%' { $$ = asd_new("%"); };
+muldiv:   				'*' { $$ = astNewNode("*"); }
+								| '/' { $$ = astNewNode("/"); }
+								| '%' { $$ = astNewNode("%"); };
 	
-neg:      				'-' { $$ = asd_new("-"); }
-								| '!' { $$ = asd_new("!"); };
+neg:      				'-' { $$ = astNewNode("-"); }
+								| '!' { $$ = astNewNode("!"); };
 
 %%
