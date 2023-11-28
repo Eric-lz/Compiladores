@@ -1,0 +1,181 @@
+# Executado assim: ./output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  x55d0b4e12490 -> x55d0b4e12550
+  x55d0b4e12490 -> x55d0b4e14180
+  x55d0b4e12550 -> x55d0b4e12510
+  x55d0b4e12550 -> x55d0b4e126f0
+  x55d0b4e126f0 -> x55d0b4e12810
+  x55d0b4e12810 -> x55d0b4e12790
+  x55d0b4e12810 -> x55d0b4e12b30
+  x55d0b4e12b30 -> x55d0b4e128d0
+  x55d0b4e12b30 -> x55d0b4e12f10
+  x55d0b4e128d0 -> x55d0b4e12950
+  x55d0b4e12950 -> x55d0b4e129d0
+  x55d0b4e129d0 -> x55d0b4e12a50
+  x55d0b4e12f10 -> x55d0b4e12f70
+  x55d0b4e12f10 -> x55d0b4e12bb0
+  x55d0b4e12f10 -> x55d0b4e13270
+  x55d0b4e12bb0 -> x55d0b4e12e10
+  x55d0b4e12e10 -> x55d0b4e12cd0
+  x55d0b4e12e10 -> x55d0b4e12e90
+  x55d0b4e12cd0 -> x55d0b4e12bf0
+  x55d0b4e12cd0 -> x55d0b4e12d10
+  x55d0b4e12bf0 -> x55d0b4e12c70
+  x55d0b4e12d10 -> x55d0b4e12d90
+  x55d0b4e13270 -> x55d0b4e13050
+  x55d0b4e13270 -> x55d0b4e13210
+  x55d0b4e13270 -> x55d0b4e13570
+  x55d0b4e13050 -> x55d0b4e13010
+  x55d0b4e13050 -> x55d0b4e13090
+  x55d0b4e13090 -> x55d0b4e13110
+  x55d0b4e13210 -> x55d0b4e131d0
+  x55d0b4e13570 -> x55d0b4e13350
+  x55d0b4e13570 -> x55d0b4e13510
+  x55d0b4e13570 -> x55d0b4e139b0
+  x55d0b4e13350 -> x55d0b4e13310
+  x55d0b4e13350 -> x55d0b4e13390
+  x55d0b4e13390 -> x55d0b4e13410
+  x55d0b4e13510 -> x55d0b4e134d0
+  x55d0b4e139b0 -> x55d0b4e13650
+  x55d0b4e139b0 -> x55d0b4e137f0
+  x55d0b4e139b0 -> x55d0b4e13950
+  x55d0b4e139b0 -> x55d0b4e13c70
+  x55d0b4e13650 -> x55d0b4e13610
+  x55d0b4e13650 -> x55d0b4e136d0
+  x55d0b4e137f0 -> x55d0b4e13850
+  x55d0b4e137f0 -> x55d0b4e137b0
+  x55d0b4e13950 -> x55d0b4e13910
+  x55d0b4e13c70 -> x55d0b4e13ab0
+  x55d0b4e13c70 -> x55d0b4e13c10
+  x55d0b4e13c70 -> x55d0b4e14070
+  x55d0b4e13ab0 -> x55d0b4e13a70
+  x55d0b4e13ab0 -> x55d0b4e13b30
+  x55d0b4e13c10 -> x55d0b4e13bd0
+  x55d0b4e14070 -> x55d0b4e13d50
+  x55d0b4e14070 -> x55d0b4e13fb0
+  x55d0b4e13d50 -> x55d0b4e13d10
+  x55d0b4e13d50 -> x55d0b4e13dd0
+  x55d0b4e13fb0 -> x55d0b4e14010
+  x55d0b4e13fb0 -> x55d0b4e13ed0
+  x55d0b4e13ed0 -> x55d0b4e13e90
+  x55d0b4e13ed0 -> x55d0b4e13f50
+  x55d0b4e14180 -> x55d0b4e14220
+  x55d0b4e14220 -> x55d0b4e14400
+  x55d0b4e14400 -> x55d0b4e14460
+  x55d0b4e14400 -> x55d0b4e14320
+  x55d0b4e14400 -> x55d0b4e14880
+  x55d0b4e14320 -> x55d0b4e142e0
+  x55d0b4e14320 -> x55d0b4e143a0
+  x55d0b4e14880 -> x55d0b4e148e0
+  x55d0b4e14880 -> x55d0b4e14560
+  x55d0b4e14880 -> x55d0b4e14a40
+  x55d0b4e14560 -> x55d0b4e14520
+  x55d0b4e14560 -> x55d0b4e145a0
+  x55d0b4e145a0 -> x55d0b4e14740
+  x55d0b4e14740 -> x55d0b4e14660
+  x55d0b4e14740 -> x55d0b4e147e0
+  x55d0b4e14660 -> x55d0b4e14620
+  x55d0b4e14660 -> x55d0b4e146e0
+  x55d0b4e14a40 -> x55d0b4e14aa0
+  x55d0b4e14a40 -> x55d0b4e14960
+  x55d0b4e14a40 -> x55d0b4e14c80
+  x55d0b4e14960 -> x55d0b4e149e0
+  x55d0b4e14c80 -> x55d0b4e14ce0
+  x55d0b4e14c80 -> x55d0b4e14ba0
+  x55d0b4e14c80 -> x55d0b4e14e40
+  x55d0b4e14ba0 -> x55d0b4e14b60
+  x55d0b4e14ba0 -> x55d0b4e14c20
+  x55d0b4e14e40 -> x55d0b4e14ea0
+  x55d0b4e14e40 -> x55d0b4e14d60
+  x55d0b4e14d60 -> x55d0b4e14de0
+  x55d0b4e12490 [label="funcao"];
+  x55d0b4e12550 [label="return"];
+  x55d0b4e12510 [label="5"];
+  x55d0b4e126f0 [label="call chamada"];
+  x55d0b4e12810 [label="call argumento"];
+  x55d0b4e12790 [label="arg"];
+  x55d0b4e12b30 [label="call arg"];
+  x55d0b4e128d0 [label="arg1"];
+  x55d0b4e12950 [label="arg2"];
+  x55d0b4e129d0 [label="arg3"];
+  x55d0b4e12a50 [label="arg4"];
+  x55d0b4e12f10 [label="="];
+  x55d0b4e12f70 [label="var"];
+  x55d0b4e12bb0 [label="-"];
+  x55d0b4e12e10 [label="*"];
+  x55d0b4e12cd0 [label="/"];
+  x55d0b4e12bf0 [label="-"];
+  x55d0b4e12c70 [label="2"];
+  x55d0b4e12d10 [label="-"];
+  x55d0b4e12d90 [label="6"];
+  x55d0b4e12e90 [label="7"];
+  x55d0b4e13270 [label="if"];
+  x55d0b4e13050 [label="=="];
+  x55d0b4e13010 [label="var"];
+  x55d0b4e13090 [label="-"];
+  x55d0b4e13110 [label="5"];
+  x55d0b4e13210 [label="return"];
+  x55d0b4e131d0 [label="0"];
+  x55d0b4e13570 [label="if"];
+  x55d0b4e13350 [label="<="];
+  x55d0b4e13310 [label="var"];
+  x55d0b4e13390 [label="-"];
+  x55d0b4e13410 [label="5"];
+  x55d0b4e13510 [label="return"];
+  x55d0b4e134d0 [label="2"];
+  x55d0b4e139b0 [label="if"];
+  x55d0b4e13650 [label="!="];
+  x55d0b4e13610 [label="var"];
+  x55d0b4e136d0 [label="2"];
+  x55d0b4e137f0 [label="="];
+  x55d0b4e13850 [label="var"];
+  x55d0b4e137b0 [label="call chamada"];
+  x55d0b4e13950 [label="return"];
+  x55d0b4e13910 [label="call chamada"];
+  x55d0b4e13c70 [label="while"];
+  x55d0b4e13ab0 [label=">="];
+  x55d0b4e13a70 [label="call func"];
+  x55d0b4e13b30 [label="72"];
+  x55d0b4e13c10 [label="return"];
+  x55d0b4e13bd0 [label="num"];
+  x55d0b4e14070 [label="while"];
+  x55d0b4e13d50 [label="=="];
+  x55d0b4e13d10 [label="var"];
+  x55d0b4e13dd0 [label="2"];
+  x55d0b4e13fb0 [label="="];
+  x55d0b4e14010 [label="var"];
+  x55d0b4e13ed0 [label="|"];
+  x55d0b4e13e90 [label="x"];
+  x55d0b4e13f50 [label="y"];
+  x55d0b4e14180 [label="func"];
+  x55d0b4e14220 [label="call chamada"];
+  x55d0b4e14400 [label="="];
+  x55d0b4e14460 [label="var"];
+  x55d0b4e14320 [label="&"];
+  x55d0b4e142e0 [label="pos"];
+  x55d0b4e143a0 [label="con"];
+  x55d0b4e14880 [label="="];
+  x55d0b4e148e0 [label="var"];
+  x55d0b4e14560 [label="/"];
+  x55d0b4e14520 [label="num"];
+  x55d0b4e145a0 [label="-"];
+  x55d0b4e14740 [label="-"];
+  x55d0b4e14660 [label="*"];
+  x55d0b4e14620 [label="num2"];
+  x55d0b4e146e0 [label="num3"];
+  x55d0b4e147e0 [label="call func"];
+  x55d0b4e14a40 [label="="];
+  x55d0b4e14aa0 [label="var"];
+  x55d0b4e14960 [label="!"];
+  x55d0b4e149e0 [label="true"];
+  x55d0b4e14c80 [label="="];
+  x55d0b4e14ce0 [label="var"];
+  x55d0b4e14ba0 [label=">"];
+  x55d0b4e14b60 [label="num"];
+  x55d0b4e14c20 [label="pos"];
+  x55d0b4e14e40 [label="="];
+  x55d0b4e14ea0 [label="var"];
+  x55d0b4e14d60 [label="-"];
+  x55d0b4e14de0 [label="5"];
+}

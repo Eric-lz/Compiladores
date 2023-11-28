@@ -1,0 +1,51 @@
+int oi, score, teste;
+bool tchau, x;
+float bola;
+
+(int param, float par, bool test) >= int ! funcao{
+  return 5;
+
+  int var, bla, ola;
+  float x, y, z;
+  bool eee;
+
+  chamada();
+  argumento(arg);
+  arg(arg1, arg2, arg3,arg4);
+
+  var = -(-2/-6*7);
+
+  if(var == -5){
+    return 0;
+  };
+
+  if(var <= (-5)){
+    return 2;
+  };
+
+  if(var != 2){
+    var = chamada();
+  }
+  else {
+    return chamada();
+  };
+
+  while(func() >= 72){
+    return num;
+  };
+
+  while(var == 2){
+    var = x | y;
+  };
+}
+
+(int param) >= float! func{
+  chamada();
+
+  int var;
+  var = pos & con;
+  var = num/-(num2*num3-func());
+  var = !true;
+  var = num > pos;
+  var = -5;
+}

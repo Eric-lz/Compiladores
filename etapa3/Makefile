@@ -1,25 +1,13 @@
-CC=g++
-CFLAGS=
-OBJ = main.o lex.yy.o utils.o parser.tab.o
-
-%.o: %.c flex
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-all: $(OBJ)
-	$(CC) -o etapa3 $^ $(CFLAGS)
-
-bison: parser.y
+all:
 	bison -d parser.y --report=all --report-file=parser.output
-
-flex: scanner.l bison
 	flex scanner.l
+#	gcc -fsanitize=address -g -Werror -o etapa3 *.c
+	gcc -g -Werror -o etapa3 *.c
 
 test: etapa3
-	./etapa3 < input.txt
-
-example: ast.cpp
-	$(CC) ast.cpp -o ast
-	./ast | ./output2dot.sh | xdot -
+	./etapa3 < input.txt > output.txt
+	./output2dot.sh < output.txt > saida.dot
+	xdot saida.dot
 
 clean:
-	rm -f *.o lex.yy.c parser.tab.* etapa3 *.output
+	rm -f *.o lex.yy.c parser.tab.* etapa3 *.output *.dot output.txt

@@ -91,7 +91,7 @@ extern void* arvore;
 
 %%
 
-programa: 					lista { $$ = $1; arvore = $$;}
+programa: 					lista { $$ = $1; arvore = $$; asd_print_graphviz($$); asd_free($$); }
 									| /* vazio */ { $$ = NULL; };
 
 lista: 							elemento lista { if($1 == NULL){ $$ = $2; }else{ $$ = $1; asd_add_child($$, $2); } }
