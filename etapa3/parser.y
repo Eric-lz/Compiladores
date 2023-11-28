@@ -104,14 +104,14 @@ elemento: 					decl_global { $$ = NULL; }
 
 decl_global: 				tipo ls_var ';';
 
-ls_var: 						ls_var ',' TK_IDENTIFICADOR 
-									| TK_IDENTIFICADOR;
+ls_var: 						ls_var ',' TK_IDENTIFICADOR { free($3.valor); }
+									| TK_IDENTIFICADOR { free($1.valor); };
 
 // Definicao de Funcoes
 
-funcao: 						cabecalho corpo { $$ = $1; astAddChild($$, $2);};
+funcao: 						cabecalho corpo { $$ = $1; astAddChild($$, $2); };
 
-cabecalho: 					'(' parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR { $$ = astNewNode(strdup($7.valor)); };
+cabecalho: 					'(' parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR { $$ = astNewNode($7.valor); { free($7.valor); } };
 	
 parametros: 				ls_parametros 
 									| /* vazio */;
@@ -119,7 +119,7 @@ parametros: 				ls_parametros
 ls_parametros: 			ls_parametros ',' param 
 									| param;
 
-param: 							tipo TK_IDENTIFICADOR;
+param: 							tipo TK_IDENTIFICADOR { free($2.valor); };
 
 tipo: 							TK_PR_INT
 									| TK_PR_FLOAT 
@@ -147,11 +147,11 @@ decl_local: 			tipo ls_var;
 
 // Atribuicao
 
-atribuicao: 			TK_IDENTIFICADOR '=' expr { $$ = astNewNode("="); astAddChild($$, astNewNode(strdup($1.valor))); astAddChild($$, $3); };
+atribuicao: 			TK_IDENTIFICADOR '=' expr { $$ = astNewNode("="); astAddChild($$, astNewNode($1.valor)); free($1.valor); astAddChild($$, $3); };
 
 // Chamada de funcao
 
-chamada_func: 		TK_IDENTIFICADOR '(' argumentos ')' { char label[] = "call "; strcat(label, strdup($1.valor)); $$ = astNewNode(strdup(label)); astAddChild($$, $3); };
+chamada_func: 		TK_IDENTIFICADOR '(' argumentos ')' { char label[] = "call "; strcat(label, $1.valor); free($1.valor); $$ = astNewNode(label); astAddChild($$, $3); };
 
 argumentos:				ls_argumentos { $$ = $1; } 
 								| /* vazio */ { $$ = NULL; };
@@ -207,14 +207,14 @@ expr7:  					neg expr7 { $$ = $1; astAddChild($$, $2); }
 expr8:  					'(' expr ')' { $$ = $2; }
 								| operando { $$ = $1; };
 
-operando: 				TK_IDENTIFICADOR { $$ = astNewNode(strdup($1.valor)); }
+operando: 				TK_IDENTIFICADOR { $$ = astNewNode($1.valor); free($1.valor);}
 								| literal { $$ = $1; }
 								| chamada_func { $$ = $1; };  
 	
-literal: 					TK_LIT_INT { $$ = astNewNode(strdup($1.valor)); }
-								| TK_LIT_FLOAT { $$ = astNewNode(strdup($1.valor)); }
-								| TK_LIT_TRUE { $$ = astNewNode(strdup($1.valor)); }
-								| TK_LIT_FALSE { $$ = astNewNode(strdup(strdup($1.valor))); };
+literal: 					TK_LIT_INT { $$ = astNewNode($1.valor); free($1.valor); }
+								| TK_LIT_FLOAT { $$ = astNewNode($1.valor); free($1.valor);}
+								| TK_LIT_TRUE { $$ = astNewNode($1.valor); free($1.valor);}
+								| TK_LIT_FALSE { $$ = astNewNode($1.valor); free($1.valor);};
 
 or:       				TK_OC_OR { $$ = astNewNode("|"); };
 
