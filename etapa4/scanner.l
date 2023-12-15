@@ -74,15 +74,15 @@ NEW_LINE ("\r\n"|"\n")
 
 "return" { return TK_PR_RETURN; }
 
-"true" { set_valor_lexico(LITERAL); return TK_LIT_TRUE;}
+"true" { set_valor_lexico(TK_LIT); return TK_LIT_TRUE;}
 
-"false" { set_valor_lexico(LITERAL); return TK_LIT_FALSE;}
+"false" { set_valor_lexico(TK_LIT); return TK_LIT_FALSE;}
 
-{FLOAT} { set_valor_lexico(LITERAL); return TK_LIT_FLOAT;}
+{FLOAT} { set_valor_lexico(TK_LIT); return TK_LIT_FLOAT;}
 
-{INT} { set_valor_lexico(LITERAL); return TK_LIT_INT; }
+{INT} { set_valor_lexico(TK_LIT); return TK_LIT_INT; }
 
-{IDENT} { set_valor_lexico(IDENTIFICADOR); return TK_IDENTIFICADOR;}
+{IDENT} { set_valor_lexico(TK_IDENT); return TK_IDENTIFICADOR;}
 
 . { return TK_ERRO; }
 

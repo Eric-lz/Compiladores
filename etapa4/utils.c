@@ -5,6 +5,7 @@ Pedro Arejano Scheunemann - 00335768
 */
 
 #include <stdio.h>
+#include "stack.h"
 
 extern int yylineno;
 
@@ -16,3 +17,4 @@ int get_line_number(void)
 void yyerror(char *mensagem){
 	printf("Na linha %d: %s\n", get_line_number(), mensagem);
 }
+

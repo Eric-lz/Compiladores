@@ -1,0 +1,4 @@
+int global;
+
+(int x) >= int! teste_func {}
+(int x) >= int! teste_func {}

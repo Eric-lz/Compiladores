@@ -4,29 +4,32 @@ Eric Peracchi Pisoni - 00318500
 Pedro Arejano Scheunemann - 00335768
 */
 
-
-// todo create node tem que botar tipo
-// nos operadores tb -> tipo segue a regra de inferencia da spec
-
 %{
 
 #include <stdio.h>
 #include <string.h>
+#include "stack.h"
 
 int yylex(void);
 void yyerror (char const *mensagem);
 extern void* arvore;
+pilha_tabelas_t *pilha;
 
 %}
 
-%code requires { #include "ast.h" }
+%code requires { 
+	#include "ast.h" 
+	#include "lexvalue.h"
+	#include "stack.h"
+}
 
 %define parse.error verbose
 
-%union 
-{
+%union {
   valor_lexico_t valor_lexico;
+  vetor_variaveis_t lista_valores_lexicos;
   asd_tree_t *nodo_arvore;
+  simbolo_tipo tipo_dado;
 }
 
 %token TK_PR_INT
@@ -49,22 +52,25 @@ extern void* arvore;
 %token<valor_lexico> TK_LIT_TRUE
 %token TK_ERRO
 
+//%type<nodo_arvore> programa 
+//%type<nodo_arvore> programa 
+
 %type<nodo_arvore> programa 					
 %type<nodo_arvore> lista 						
 %type<nodo_arvore> elemento 					
-//%type<nodo_arvore> decl_global				
-//%type<nodo_arvore> ls_var 				
+%type<lista_valores_lexicos> decl_global				
+%type<lista_valores_lexicos> ls_var 				
 %type<nodo_arvore> funcao
 %type<nodo_arvore> cabecalho
 // %type<nodo_arvore> parametros
 // %type<nodo_arvore> ls_parametros
 // %type<nodo_arvore> param 							
-// %type<nodo_arvore> tipo						
+%type<tipo_dado> tipo						
 %type<nodo_arvore> corpo
 %type<nodo_arvore> bloco					
 %type<nodo_arvore> ls_comandos	
 %type<nodo_arvore> comando	
-//%type<nodo_arvore> decl_local 			
+%type<lista_valores_lexicos> decl_local 			
 %type<nodo_arvore> atribuicao 			
 %type<nodo_arvore> chamada_func 		
 %type<nodo_arvore> argumentos				
@@ -85,25 +91,22 @@ extern void* arvore;
 %type<nodo_arvore> expr8 					
 %type<nodo_arvore> operando
 %type<nodo_arvore> literal
-%type<nodo_arvore> or
-%type<nodo_arvore> and
-%type<nodo_arvore> igual
-%type<nodo_arvore> compara
-%type<nodo_arvore> addsub
-%type<nodo_arvore> muldiv
-%type<nodo_arvore> neg
-
 
 %%
 
-abre_escopo: /* vazio */ 
-{
+inicio: abre_escopo programa fecha_escopo;
 
+abre_escopo: /* vazio */
+{
+	puts("abrindo escopo...");
+	pilha = empilharTabela(pilha, novaTabela());
 };
 
-fecha_escopo: /* vazio */ 
+fecha_escopo: /* vazio */
 {
-
+	printPilha(pilha);
+	pilha = desempilharTabela(pilha);
+	puts("fechando escopo...");
 };
 
 programa: lista 
@@ -149,30 +152,40 @@ elemento: funcao
 
 decl_global: tipo ls_var ';'
 {
-	// inserir na tabela cada variavel que vem de ls_Var / faz um for / antes ve se a var nao ta na pilha
+	for (int i = 0; i < $2.num_variaveis; i++)
+	{
+		declaracao_var(pilha, $2.variaveis[i].valor, $2.variaveis[i].num_linha, $1);
+	}
 }; 
 
 ls_var: ls_var ',' TK_IDENTIFICADOR 
-{ 
+{
+	adicionarVariavelLista(&($1), $3);
+	$$ = $1;
 	free($3.valor); 
 };
 
 ls_var: TK_IDENTIFICADOR 
 { 
+	vetor_variaveis_t lista;
+  inicializarListaVariaveis(&lista);
+  adicionarVariavelLista(&lista, $1);
+  $$ = lista;
 	free($1.valor); 
 };
 
 // Definicao de Funcoes
 
-funcao: cabecalho corpo 
+funcao: abre_escopo cabecalho corpo fecha_escopo
 { 
-	$$ = $1; 
-	astAddChild($$, $2); 
+	$$ = $2; 
+	astAddChild($$, $3); 
 };
 
 cabecalho: 	'(' parametros ')' TK_OC_GE tipo '!' TK_IDENTIFICADOR 
 { 
-	$$ = astNewNode($7.valor); // tipo vai ser igual a tipo
+	$$ = astNewNode($7.valor, $5); 
+	declaracao_func(pilha, $7.valor, $7.num_linha, $5);
 	free($7.valor); 
 };
 	
@@ -182,10 +195,24 @@ ls_parametros: 	ls_parametros ',' param | param;
 
 param: tipo TK_IDENTIFICADOR 
 { 
+	declaracao_var(pilha, $2.valor, $2.num_linha, $1);
 	free($2.valor); 
 };
 
-tipo: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL;
+tipo: TK_PR_INT 
+{
+	$$ = SYM_INT;
+};
+
+tipo: TK_PR_FLOAT
+{
+	$$ = SYM_FLOAT;
+};
+
+tipo: TK_PR_BOOL
+{
+	$$ = SYM_BOOL;
+};
 
 corpo: bloco 
 { 
@@ -217,27 +244,54 @@ ls_comandos: /* vazio */
 	$$ = NULL; 
 };
 
-comando: decl_local 		{ $$ = NULL; }
-		| atribuicao 		{ $$ = $1; }
-		| chamada_func 		{ $$ = $1; }
-		| retorno 			{ $$ = $1; }
-		| controle_fluxo 	{ $$ = $1; }
-		| bloco 			{ $$ = $1; };
+comando: decl_local 
+{ 
+	$$ = NULL; 
+};
+
+comando: atribuicao 		
+{ 
+	$$ = $1; 
+};
+
+comando: chamada_func 		
+{ 
+	$$ = $1; 
+};
+
+comando: retorno 			
+{ 
+	$$ = $1; 
+};
+
+comando: controle_fluxo 	
+{ 
+	$$ = $1; 
+};
+
+comando: abre_escopo bloco fecha_escopo
+{ 
+	$$ = $2; 
+}; 
+
 
 // Declaracao de variavel local
 
 decl_local: tipo ls_var 
 {
-
+	for (int i = 0; i < $2.num_variaveis; i++)
+	{
+		declaracao_var(pilha,  $2.variaveis[i].valor, $2.variaveis[i].num_linha, $1);
+	}
 };
 
 // Atribuicao
 
 atribuicao: TK_IDENTIFICADOR '=' expr 
 { 
-	// passo 1: verificar se tk_ident existe na tabela e se é uma variavel
-	$$ = astNewNode("="); // o tipo vai ser o tipo do tk_ident
-	astAddChild($$, astNewNode($1.valor)); 
+	simbolo_tipo tipo = verifica_declaracao(pilha, $1.valor, SYM_IDENTIFICADOR);
+	$$ = astNewNode("=", tipo); 
+	astAddChild($$, astNewNode($1.valor, tipo)); 
 	free($1.valor); 
 	astAddChild($$, $3); 
 };
@@ -246,11 +300,11 @@ atribuicao: TK_IDENTIFICADOR '=' expr
 
 chamada_func: TK_IDENTIFICADOR '(' argumentos ')' 
 { 
-	// passo 1: verificar se tk_ident existe na tabela e se é uma função
+	simbolo_tipo tipo = verifica_declaracao(pilha, $1.valor, SYM_FUNCAO);
 	char label[] = "call "; 
 	strcat(label, $1.valor); 
 	free($1.valor); 
-	$$ = astNewNode(label); 
+	$$ = astNewNode(label, tipo); 
 	astAddChild($$, $3); 
 };
 
@@ -277,7 +331,7 @@ arg: expr
 
 retorno: TK_PR_RETURN expr 
 { 
-	$$ = astNewNode("return"); 
+	$$ = astNewNode("return", $2->tipo_dado); 
 	astAddChild($$, $2); 
 };
 
@@ -297,7 +351,7 @@ controle_fluxo: if
 
 while: 	TK_PR_WHILE '(' expr ')' bloco 
 { 
-	$$ = astNewNode("while"); 
+	$$ = astNewNode("while", $3->tipo_dado); 
 	astAddChild($$, $3); 
 	astAddChild($$, $5); 
 };
@@ -306,7 +360,7 @@ while: 	TK_PR_WHILE '(' expr ')' bloco
 
 if: TK_PR_IF '(' expr ')' bloco else 
 { 
-	$$ = astNewNode("if"); 
+	$$ = astNewNode("if", $3->tipo_dado); 
 	astAddChild($$, $3); 
 	astAddChild($$, $5); 
 	astAddChild($$, $6); 
@@ -322,11 +376,12 @@ else: /* vazio */
 	$$ = NULL; 
 };
 
+
 // Expressoes
 
 expr:  expr TK_OC_OR expr2 
 { 
-	$$ = astNewNode("|");
+	$$ = astNewNode("|", infere_tipo($1->tipo_dado, $3->tipo_dado));
 	astAddChild($$,$1); 
 	astAddChild($$,$3); 
 };
@@ -338,7 +393,7 @@ expr: expr2
 		
 expr2: 	expr2 TK_OC_AND expr3 
 { 
-	$$ = astNewNode("&");
+	$$ = astNewNode("&", infere_tipo($1->tipo_dado, $3->tipo_dado));
 	astAddChild($$,$1); 
 	astAddChild($$,$3); 
 };
@@ -348,21 +403,49 @@ expr2: expr3
 	$$ = $1; 
 };
 	
-expr3: expr3 igual expr4 
+expr3: expr3 TK_OC_EQ expr4 
 { 
-	$$ = $2; 
+	$$ = astNewNode("==", infere_tipo($1->tipo_dado, $3->tipo_dado)); 
 	astAddChild($$,$1); 
 	astAddChild($$,$3); 
-}
+};
+
+expr3: expr3 TK_OC_NE expr4 
+{ 
+	$$ = astNewNode("!=", infere_tipo($1->tipo_dado, $3->tipo_dado)); 
+	astAddChild($$,$1); 
+	astAddChild($$,$3); 
+};
 
 expr3: expr4 
 { 
 	$$ = $1; 
 };
 	
-expr4: expr4 compara expr5 
+expr4: expr4 '<' expr5 
 { 
-	$$ = $2; 
+	$$ = astNewNode("<", infere_tipo($1->tipo_dado, $3->tipo_dado)); 
+	astAddChild($$,$1); 
+	astAddChild($$,$3); 
+};
+
+expr4: expr4 '>' expr5 
+{ 
+	$$ = astNewNode(">", infere_tipo($1->tipo_dado, $3->tipo_dado));
+	astAddChild($$,$1); 
+	astAddChild($$,$3); 
+};
+
+expr4: expr4 TK_OC_LE expr5 
+{ 
+	$$ = astNewNode("<=", infere_tipo($1->tipo_dado, $3->tipo_dado));
+	astAddChild($$,$1); 
+	astAddChild($$,$3); 
+};
+
+expr4: expr4 TK_OC_GE expr5 
+{ 
+	$$ = astNewNode(">=", infere_tipo($1->tipo_dado, $3->tipo_dado));
 	astAddChild($$,$1); 
 	astAddChild($$,$3); 
 };
@@ -372,9 +455,16 @@ expr4: expr5
 	$$ = $1; 
 };
 	
-expr5: expr5 addsub expr6 
+expr5: expr5 '+' expr6 
 { 
-	$$ = $2; 
+	$$ = astNewNode("+", infere_tipo($1->tipo_dado, $3->tipo_dado));
+	astAddChild($$,$1); 
+	astAddChild($$,$3); 
+};
+
+expr5: expr5 '-' expr6 
+{ 
+	$$ = astNewNode("-", infere_tipo($1->tipo_dado, $3->tipo_dado));
 	astAddChild($$,$1); 
 	astAddChild($$,$3); 
 };
@@ -384,9 +474,23 @@ expr5: expr6
 	$$ = $1; 
 };
 	
-expr6: expr6 muldiv expr7 
+expr6: expr6 '*' expr7 
 { 
-	$$ = $2; 
+	$$ = astNewNode("*", infere_tipo($1->tipo_dado, $3->tipo_dado));
+	astAddChild($$,$1); 
+	astAddChild($$,$3); 
+};
+
+expr6: expr6 '/' expr7 
+{ 
+	$$ = astNewNode("/", infere_tipo($1->tipo_dado, $3->tipo_dado));
+	astAddChild($$,$1); 
+	astAddChild($$,$3); 
+};
+
+expr6: expr6 '%' expr7 
+{ 
+	$$ = astNewNode("%", infere_tipo($1->tipo_dado, $3->tipo_dado));
 	astAddChild($$,$1); 
 	astAddChild($$,$3); 
 };
@@ -396,11 +500,17 @@ expr6: expr7
 	$$ = $1; 
 };
 	
-expr7: neg expr7 
+expr7: '-' expr7 
 { 
-	$$ = $1; 
+	$$ = astNewNode("-", $2->tipo_dado);
 	astAddChild($$, $2); 
-}
+};
+
+expr7: '!' expr7 
+{ 
+	$$ = astNewNode("!", $2->tipo_dado);
+	astAddChild($$, $2); 
+};
 
 expr7: expr8 
 { 
@@ -410,7 +520,7 @@ expr7: expr8
 expr8: '(' expr ')' 
 { 
 	$$ = $2; 
-}
+};
 
 expr8: operando 
 { 
@@ -419,17 +529,15 @@ expr8: operando
 
 operando: TK_IDENTIFICADOR 
 { 
-	// procura o tk_ident $1.lexema na tabela de simbolos  
-	// se nao encontrar: ERR_UNDECLARED
-	// se encontrar: 
-	$$ = astNewNode($1.valor); // tem que botar o tipo, procura na tabela
+	simbolo_tipo tipo = verifica_declaracao(pilha, $1.valor, SYM_IDENTIFICADOR);
+	$$ = astNewNode($1.valor, tipo); 
 	free($1.valor);
 };
 
 operando: literal 
 { 
 	$$ = $1; 
-}
+};
 
 operando: chamada_func 
 { 
@@ -438,47 +546,30 @@ operando: chamada_func
 	
 literal: TK_LIT_INT 
 { 
-	$$ = astNewNode($1.valor); 
+	declaracao_literal(pilha, $1.valor, $1.num_linha, SYM_INT);
+	$$ = astNewNode($1.valor, SYM_FLOAT); 
 	free($1.valor); 
 };
 
 literal: TK_LIT_FLOAT 
 { 
-	$$ = astNewNode($1.valor); 
+	declaracao_literal(pilha, $1.valor, $1.num_linha, SYM_FLOAT);
+	$$ = astNewNode($1.valor, SYM_FLOAT); 
 	free($1.valor);
 };
 
 literal: TK_LIT_TRUE 
 { 
-	$$ = astNewNode($1.valor); 
+	declaracao_literal(pilha, $1.valor, $1.num_linha, SYM_BOOL);
+	$$ = astNewNode($1.valor, SYM_BOOL); 
 	free($1.valor);
 };
 
 literal: TK_LIT_FALSE 
 { 
-	$$ = astNewNode($1.valor); 
+	declaracao_literal(pilha, $1.valor, $1.num_linha, SYM_BOOL);
+	$$ = astNewNode($1.valor, SYM_BOOL); 
 	free($1.valor);
 };
-
-
-
-
-igual:    				TK_OC_EQ { $$ = astNewNode("=="); }
-								| TK_OC_NE { $$ = astNewNode("!="); };
-	
-compara:  				'<' { $$ = astNewNode("<"); }
-								| '>' { $$ = astNewNode(">"); }
-								| TK_OC_LE { $$ = astNewNode("<="); }
-								| TK_OC_GE { $$ = astNewNode(">="); };
-	
-addsub:   				'+' { $$ = astNewNode("+"); }
-								| '-' { $$ = astNewNode("-"); };
-	
-muldiv:   				'*' { $$ = astNewNode("*"); }
-								| '/' { $$ = astNewNode("/"); }
-								| '%' { $$ = astNewNode("%"); };
-	
-neg:      				'-' { $$ = astNewNode("-"); }
-								| '!' { $$ = astNewNode("!"); };
 
 %%
