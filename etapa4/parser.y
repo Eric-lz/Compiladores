@@ -98,15 +98,12 @@ inicio: abre_escopo programa fecha_escopo;
 
 abre_escopo: /* vazio */
 {
-	puts("abrindo escopo...");
 	pilha = empilharTabela(pilha, novaTabela());
 };
 
 fecha_escopo: /* vazio */
 {
-	printPilha(pilha);
 	pilha = desempilharTabela(pilha);
-	puts("fechando escopo...");
 };
 
 programa: lista 

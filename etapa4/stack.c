@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "stack.h"
+#include "utils.h"
 
 pilha_tabelas_t* novaPilha()
 {
@@ -88,7 +89,7 @@ void declaracao_var(pilha_tabelas_t *pilha, const char *lexema, int num_linha, s
 {
     if (existeSimboloTabela(topoDaPilha(pilha), lexema, SYM_IDENTIFICADOR))
     {
-        printf("ERR_DECLARED: %s.\n", lexema);
+        printf("ERR_DECLARED: Variavel %s ja foi declarada.\n", lexema);
         exit(ERR_DECLARED);
     }
     else
@@ -101,7 +102,7 @@ void declaracao_func(pilha_tabelas_t *pilha, const char *lexema, int num_linha, 
 {
     if (existeSimboloTabela(baseDaPilha(pilha), lexema, SYM_FUNCAO))
     {
-        printf("ERR_DECLARED: %s.\n", lexema);
+        printf("ERR_DECLARED: Funcao %s ja foi declarada.\n", lexema);
         exit(ERR_DECLARED);
     }
     else
@@ -122,13 +123,13 @@ simbolo_tipo verifica_declaracao(pilha_tabelas_t *pilha, const char *lexema, sim
 {
     switch(existeSimboloPilha(pilha, lexema, natureza))
     {
-        case(0):    printf("ERR_UNDECLARED: %s.\n", lexema);
+        case(0):    printf("ERR_UNDECLARED: Identificador %s nao foi declarado.\n", lexema);
                     exit(ERR_UNDECLARED);
                     break;
-        case(2):    printf("ERR_FUNCTION: %s.\n", lexema);
+        case(2):    printf("ERR_FUNCTION: Funcao %s usada como variavel.\n", lexema);
                     exit(ERR_FUNCTION);
                     break;
-        case(3):    printf("ERR_VARIABLE: %s.\n", lexema);
+        case(3):    printf("ERR_VARIABLE: Variavel %s usada como funcao.\n", lexema);
                     exit(ERR_VARIABLE);
                     break;
         case(4):    return SYM_INT;
