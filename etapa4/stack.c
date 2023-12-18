@@ -89,7 +89,7 @@ void declaracao_var(pilha_tabelas_t *pilha, const char *lexema, int num_linha, s
 {
     if (existeSimboloTabela(topoDaPilha(pilha), lexema, SYM_IDENTIFICADOR))
     {
-        printf("ERR_DECLARED: Variavel %s ja foi declarada.\n", lexema);
+        printf("ERR_DECLARED: Na linha %d, ariavel %s ja foi declarada.\n", get_line_number(), lexema);
         exit(ERR_DECLARED);
     }
     else
@@ -102,7 +102,7 @@ void declaracao_func(pilha_tabelas_t *pilha, const char *lexema, int num_linha, 
 {
     if (existeSimboloTabela(baseDaPilha(pilha), lexema, SYM_FUNCAO))
     {
-        printf("ERR_DECLARED: Funcao %s ja foi declarada.\n", lexema);
+        printf("ERR_DECLARED: Na linha %d, funcao %s ja foi declarada.\n", get_line_number(), lexema);
         exit(ERR_DECLARED);
     }
     else
@@ -123,13 +123,13 @@ simbolo_tipo verifica_declaracao(pilha_tabelas_t *pilha, const char *lexema, sim
 {
     switch(existeSimboloPilha(pilha, lexema, natureza))
     {
-        case(0):    printf("ERR_UNDECLARED: Identificador %s nao foi declarado.\n", lexema);
+        case(0):    printf("ERR_UNDECLARED: Na linha %d, identificador %s nao foi declarado.\n", get_line_number(),lexema);
                     exit(ERR_UNDECLARED);
                     break;
-        case(2):    printf("ERR_FUNCTION: Funcao %s usada como variavel.\n", lexema);
+        case(2):    printf("ERR_FUNCTION: Na linha %d, funcao %s usada como variavel.\n", get_line_number(), lexema);
                     exit(ERR_FUNCTION);
                     break;
-        case(3):    printf("ERR_VARIABLE: Variavel %s usada como funcao.\n", lexema);
+        case(3):    printf("ERR_VARIABLE: Na linha %d, variavel %s usada como funcao.\n", get_line_number(), lexema);
                     exit(ERR_VARIABLE);
                     break;
         case(4):    return SYM_INT;
