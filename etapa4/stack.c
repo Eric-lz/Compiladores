@@ -38,7 +38,7 @@ tabela_simbolos_t *topoDaPilha(pilha_tabelas_t *pilha)
 tabela_simbolos_t *baseDaPilha(pilha_tabelas_t *pilha)
 {
     pilha_tabelas_t *temp = pilha;
-    while (temp->anterior->anterior != NULL)
+    while (temp->anterior != NULL)
     {
         temp = temp->anterior;
     }
