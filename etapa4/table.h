@@ -1,7 +1,7 @@
 #ifndef _TABELA_SIMBOLOS_H_
 #define _TABELA_SIMBOLOS_H_
 
-typedef enum { SYM_LITERAL, SYM_IDENTIFICADOR, SYM_FUNCAO } simbolo_natureza;
+typedef enum { SYM_LITERAL = 1, SYM_IDENTIFICADOR, SYM_FUNCAO } simbolo_natureza;
 typedef enum { SYM_INT = 4, SYM_FLOAT = 5, SYM_BOOL = 6, SYM_UNDEFINED = 7} simbolo_tipo;
 
 typedef struct {
