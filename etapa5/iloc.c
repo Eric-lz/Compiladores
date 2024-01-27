@@ -69,34 +69,41 @@ void ilocPrintList(ILOC_Node* list){
   }
 }
 
+// tem alguns jeitos de fazer uma funcao pra retornar o nome do enum
+// um deles eh esse aqui:
+char* getOpName(enum Opcode op){
+  const char* opNames[] = {"add", "sub", "load", "loadAI", "store", "storeAI"};
+  return (char*) opNames[op]; // o cast (char*) eh pra resolver um warning
+}
+
+
+/* tem esse aqui tbm mas acho q prefiro o de primeiro kkk
+
 char* getOpName(enum Opcode op){
   switch(op){
-  case add:
-    return "add";
-  case sub:
-    return "sub";
-  case load:
-    return "load";
-  case loadAI:
-    return "loadAI";
-  case store:
-    return "store";
-  case storeAI:
-    return "storeAI";
+    case add: return "add";
+    case sub: return "sub";
+    case load: return "load";
+    case loadAI: return "loadAI";
+    case store: return "store";
+    case storeAI: return "storeAI";
   }
 
+  // nunca deve chegar aqui
   return "OPCODE_ERR";
 }
+*/
+
 
 
 /* --------------------------------------------- */
 /* Programa de exemplo para testar as estruturas */
 /* --------------------------------------------- */
 
+// compilar com:
 // gcc iloc.c -o iloc
-// ./iloc
 
-/* <-------- remover para testar
+/*
 
 // cria uma lista ILOC, insere nodos, printa a lista
 int main(){
@@ -131,4 +138,4 @@ int main(){
   return 0;
 }
 
-*/ // <-------- remover para testar
+*/

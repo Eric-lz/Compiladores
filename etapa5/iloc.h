@@ -2,6 +2,7 @@
 #define _ILOC_H_
 
 // Enum que representa o nome das instrucoes (mnemonico)
+// coloquei alguns aleatorios soh pra testar
 enum Opcode{add, sub, load, loadAI, store, storeAI};
 
 // Estrutura que define uma operação ILOC
@@ -24,6 +25,7 @@ ILOC_Node* ilocInsertNode(ILOC_Node* list, ILOC_Node* newNode);
 void ilocFreeList(ILOC_Node* list);
 void ilocPrintList(ILOC_Node* list);
 
+// traduz o enum para o nome da instrucao
 char* getOpName(enum Opcode op);
 
 #endif //_ILOC_H_
