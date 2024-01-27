@@ -1,0 +1,16 @@
+int oi, teste;
+bool tchau;
+float bolacha;
+
+(int x) >= int! teste_func {
+	int a;
+
+	{};{{};};
+
+	{int bola;};
+
+}
+
+(int x) >= int! teste_func {
+	int repetida;
+}

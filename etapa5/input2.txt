@@ -1,0 +1,14 @@
+int global;
+
+(int x) >= int! primeira_func {
+  x = 6 * 7;
+}
+
+(int y) >= int! segunda_func {
+  int local;
+  local = primeira_func(y);
+  bool z;
+  return y;
+}
+
+(int x) >= int! terceira_func {}
