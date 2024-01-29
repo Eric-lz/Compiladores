@@ -14,4 +14,3 @@ float bolacha;
 (int x) >= int! teste_func {
 	int repetida;
 }
-

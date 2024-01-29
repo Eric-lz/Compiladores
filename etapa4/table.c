@@ -95,4 +95,5 @@ simbolo_tipo infere_tipo(simbolo_tipo s1, simbolo_tipo s2)
         return SYM_FLOAT;
     }
     return SYM_UNDEFINED;
+
 }
