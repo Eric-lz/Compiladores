@@ -1,113 +1,89 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "symbols.h"
 
-////////////////////// TABELA DE SIMBOLOS //////////////////////
-
-typedef enum { LITERAL, IDENTIFICADOR, FUNCAO } simbolo_natureza;
-typedef enum { INT, FLOAT, BOOL } simbolo_tipo;
-
-typedef struct {
-    int num_linha;
-    simbolo_natureza natureza;
-    simbolo_tipo tipo;
-    char valor[40];
-} simbolo_conteudo_t;
-
-typedef struct {
-    char chave[40];
-    simbolo_conteudo_t conteudo;
-} entrada_tabela_simbolos_t;
-
-typedef struct {
-    entrada_tabela_simbolos_t *entradas;
-    int num_entradas;
-} tabela_simbolos_t;
-
-// Função para inicializar uma tabela de símbolos vazia
 void inicializarTabelaSimbolos(tabela_simbolos_t *tabela)
 {
     tabela->entradas = NULL;
     tabela->num_entradas = 0;
 }
 
-// Função para adicionar um símbolo à tabela de símbolos
-void adicionarSimbolo(tabela_simbolos_t *tabela, const char *chave, int num_linha, simbolo_natureza natureza, simbolo_tipo tipo, const char* valor)
+void adicionarSimbolo(tabela_simbolos_t *tabela, const char *lexema, int num_linha, simbolo_natureza natureza, simbolo_tipo tipo)
 {
     tabela->num_entradas++;
-    tabela->entradas = realloc(tabela->entradas, tabela->num_entradas * sizeof(entrada_tabela_simbolos_t));
-    entrada_tabela_simbolos_t *nova_entrada = &(tabela->entradas[tabela->num_entradas - 1]);
+    tabela->entradas = realloc(tabela->entradas, tabela->num_entradas * sizeof(tabela_entrada_t));
 
-    strcpy(nova_entrada->chave, chave);
-    nova_entrada->chave[sizeof(nova_entrada->chave) - 1] = '\0';
-
-    nova_entrada->conteudo.num_linha = num_linha;
-    nova_entrada->conteudo.natureza = natureza;
-    nova_entrada->conteudo.tipo = tipo;
-    strcpy(nova_entrada->conteudo.valor, valor);
+    tabela_entrada_t *nova_entrada = &(tabela->entradas[tabela->num_entradas - 1]);
+    nova_entrada->lexema = strdup(lexema);
+    nova_entrada->num_linha = num_linha;
+    nova_entrada->natureza = natureza;
+    nova_entrada->tipo = tipo;
 }
 
-// Função para buscar um símbolo na tabela de símbolos
-simbolo_conteudo_t* buscarSimbolo(tabela_simbolos_t *tabela, const char *chave)
+tabela_entrada_t* buscarSimboloTabela(tabela_simbolos_t *tabela, const char *chave)
 {
     for (int i = 0; i < tabela->num_entradas; i++)
     {
-        if (strcmp(tabela->entradas[i].chave, chave) == 0)
+        if (strcmp(tabela->entradas[i].lexema, chave) == 0)
         {
-            return &(tabela->entradas[i].conteudo);
+            return &(tabela->entradas[i]);
         }
     }
-    return NULL;  // Símbolo não encontrado
+    return NULL;
 }
 
-//////////////////////////////////////////////////////////////
-////////////////////// PILHA DE TABELAS //////////////////////
-
-// Estrutura para representar a pilha de tabelas de símbolos
-typedef struct NodoPilha
+void printTabela(tabela_simbolos_t *tabela)
 {
-    tabela_simbolos_t tabela;
-    struct NodoPilha *proximo;
-} NodoPilhaTabelas;
+    for (int i = 0; i < tabela->num_entradas; i++)
+    {
+        printf("Simbolo: %s ", tabela->entradas[i].lexema);
+        printf("| Linha: %d ", tabela->entradas[i].num_linha);
+        printf("| Tipo: %s ", simbolo_tipo_string(tabela->entradas[i].tipo));
+        printf("| Natureza: %s \n", simbolo_natureza_string(tabela->entradas[i].natureza));
+    }
+}
 
-// Função para inicializar a pilha de tabelas de símbolos
-void inicializarPilhaTabelas(NodoPilhaTabelas **pilha)
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+void inicializarPilhaTabelas(pilha_tabelas_t **pilha)
 {
     *pilha = NULL;
 }
 
-// Função para empilhar uma tabela de símbolos na pilha
-void empilharTabela(NodoPilhaTabelas **pilha, tabela_simbolos_t tabela)
+void empilharTabela(pilha_tabelas_t **pilha, tabela_simbolos_t tabela)
 {
-    NodoPilhaTabelas *novoNodo = malloc(sizeof(NodoPilhaTabelas));
-    novoNodo->tabela = tabela;
-    novoNodo->proximo = *pilha;
-    *pilha = novoNodo;
+    pilha_tabelas_t *novaTabela = malloc(sizeof(pilha_tabelas_t));
+    novaTabela->tabela = tabela;
+    novaTabela->anterior = *pilha;
+    *pilha = novaTabela;
 }
 
-// Função para obter o topo da pilha (a tabela de símbolos no topo)
-tabela_simbolos_t *topoDaPilha(NodoPilhaTabelas *pilha)
-{
-    return &pilha->tabela;
-}
-
-// Função para desempilhar uma tabela de símbolos da pilha
-void desempilharTabela(NodoPilhaTabelas **pilha)
+void desempilharTabela(pilha_tabelas_t **pilha)
 {
     if (*pilha == NULL)
     {
-        fprintf(stderr, "Erro: Tentativa de desempilhar tabela de símbolos de uma pilha vazia.\n");
+        fprintf(stderr, "Erro: Tentativa de desempilhar uma pilha vazia.\n");
         exit(EXIT_FAILURE);
     }
-
-    NodoPilhaTabelas *temp = *pilha;
-    *pilha = (*pilha)->proximo;
+    pilha_tabelas_t *temp = *pilha;
+    *pilha = (*pilha)->anterior;
     free(temp->tabela.entradas);
     free(temp);
 }
 
-// Função para liberar a memória ocupada pela pilha de tabelas de símbolos
-void liberarPilhaTabelas(NodoPilhaTabelas **pilha)
+tabela_simbolos_t *topoDaPilha(pilha_tabelas_t *pilha)
+{
+    if (pilha == NULL)
+    {
+        fprintf(stderr, "Erro: Tentativa de pegar topo de uma pilha vazia.\n");
+        exit(EXIT_FAILURE);
+    }
+    return &pilha->tabela;
+}
+
+void freePilhaTabelas(pilha_tabelas_t **pilha)
 {
     while (*pilha != NULL)
     {
@@ -115,41 +91,71 @@ void liberarPilhaTabelas(NodoPilhaTabelas **pilha)
     }
 }
 
-int main() {
+tabela_entrada_t* buscarSimboloPilha(pilha_tabelas_t **pilha, const char *chave)
+{
+    pilha_tabelas_t *temp = *pilha;
+    while (temp != NULL)
+    {
+        tabela_entrada_t *simbolo = buscarSimboloTabela(&(temp->tabela), chave);
+        if (simbolo != NULL)
+        {
+            return simbolo;
+        }
+        temp = temp->anterior;
+    }
+    return NULL;
+}
+
+void printPilha(pilha_tabelas_t **pilha)
+{
+    pilha_tabelas_t *temp = *pilha;
+    while (temp != NULL)
+    {
+        printTabela(&(temp->tabela));
+        temp = temp->anterior;
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+int main()
+{
+
     // Exemplo de uso das estruturas
     tabela_simbolos_t tabela1, tabela2;
     inicializarTabelaSimbolos(&tabela1);
-    adicionarSimbolo(&tabela1, "x", 10, IDENTIFICADOR, INT, "socket");
-    adicionarSimbolo(&tabela2, "y", 15, LITERAL, FLOAT, "32");
+    inicializarTabelaSimbolos(&tabela2);
+    adicionarSimbolo(&tabela1, "x", 10, IDENTIFICADOR, INT);
+    adicionarSimbolo(&tabela1, "z", 11, FUNCAO, BOOL);
+    adicionarSimbolo(&tabela2, "f", 12, LITERAL, FLOAT);
+    adicionarSimbolo(&tabela2, "g", 13, IDENTIFICADOR, BOOL);
 
-    NodoPilhaTabelas *pilha;
+    pilha_tabelas_t *pilha;
     inicializarPilhaTabelas(&pilha);
 
     empilharTabela(&pilha, tabela1);
     empilharTabela(&pilha, tabela2);
 
-    // Buscar um símbolo na tabela no topo da pilha
-    const char *chaveBusca = "y";
-    simbolo_conteudo_t *dadosSimbolo = buscarSimbolo(topoDaPilha(pilha), chaveBusca);
+    // Buscar um sï¿½mbolo na tabela no topo da pilha
+    const char *chaveBusca = "f";
+    tabela_entrada_t *dadosSimbolo = buscarSimboloPilha(&pilha, chaveBusca);
 
     if (dadosSimbolo != NULL)
     {
-        printf("Símbolo encontrado:\n");
+        printf("Sï¿½mbolo encontrado:\n");
         printf("Chave: %s\n", chaveBusca);
-        printf("Localização: %d\n", dadosSimbolo->num_linha);
+        printf("Localizaï¿½ï¿½o: %d\n", dadosSimbolo->num_linha);
         printf("Natureza: %d\n", dadosSimbolo->natureza);
         printf("Tipo: %d\n", dadosSimbolo->tipo);
-        printf("Tipo: %s\n", dadosSimbolo->valor);
     }
     else
     {
-        printf("Símbolo não encontrado: %s\n", chaveBusca);
+        printf("Sï¿½mbolo nï¿½o encontrado: %s\n", chaveBusca);
     }
 
-    // Liberar a memória ocupada pela pilha de tabelas
-    liberarPilhaTabelas(&pilha);
+    freePilhaTabelas(&pilha);
 
     return 0;
-
 }
 

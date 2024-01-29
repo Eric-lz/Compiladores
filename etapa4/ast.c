@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "ast.h"
 
-asd_tree_t *astNewNode(const char *label)
+asd_tree_t *astNewNode(const char *label, simbolo_tipo tipo)
 {
   asd_tree_t *ret = NULL;
   ret = calloc(1, sizeof(asd_tree_t));
@@ -11,6 +11,7 @@ asd_tree_t *astNewNode(const char *label)
     ret->label = strdup(label);
     ret->number_of_children = 0;
     ret->children = NULL;
+    ret->tipo_dado = tipo;
   }
   return ret;
 }
