@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include "iloc.h"
 
-ILOC_Node* ilocNewNode(enum Opcode instrucao, char* operando1, char* operando2, char* operando3){
+ILOC_Node* ilocNewNode(char* rotulo, enum Opcode instrucao, char* operando1, char* operando2, char* operando3){
   // Cria nova operacao
   ILOC_Instruction operacao = {
+    rotulo,
     instrucao,
     operando1,
     operando2,
@@ -44,25 +45,46 @@ void ilocFreeList(ILOC_Node* list){
 void ilocPrintList(ILOC_Node* list){
   // Cria um node auxiliar para percorrer até o final da lista
   ILOC_Node* node = list;
-  int count = 0;
 
   while(node != NULL){
     char* opname = getOpName(node->code.instrucao);
 
+    if(node->code.label != NULL)
+      printf("%s: ", node->code.label);
+
     switch(node->code.instrucao){
+      case loadAI:
       case add:
       case sub:
-        printf("%d: %s %s, %s => %s\n", count++, opname, node->code.op1, node->code.op2, node->code.op3);
+      case mult:
+      case div:
+      case rsubI:
+      case and:
+      case or:
+      // case 0 ... 7:  // (isso funciona tbm)
+        printf("%s %s, %s => %s\n", opname, node->code.op1, node->code.op2, node->code.op3);
         break;
 
-      case load:
-      case store:
-        printf("%d: %s %s => %s\n", count++, opname, node->code.op1, node->code.op2);
-        break;
-
-      case loadAI:
       case storeAI:
-        printf("%d: %s %s, %s => %s\n", count++, opname, node->code.op1, node->code.op2, node->code.op3);
+        printf("%s %s => %s, %s\n", opname, node->code.op1, node->code.op2, node->code.op3);
+        break;
+
+      case cmp_GE:
+      case cmp_LE:
+      case cmp_GT:
+      case cmp_LT:
+      case cmp_NE:
+      case cmp_EQ:
+      // case cmp_GE ... cmp_NE:  // (isso tbm)
+        printf("%s %s, %s -> %s\n", opname, node->code.op1, node->code.op2, node->code.op3);
+        break;
+
+      case cbr:
+        printf("%s %s -> %s, %s\n", opname, node->code.op1, node->code.op2, node->code.op3);
+        break;
+
+      case jumpI:
+        printf("%s -> %s\n", opname, node->code.op1);
         break;
     }
     node = node->next;
@@ -71,11 +93,12 @@ void ilocPrintList(ILOC_Node* list){
 
 // tem alguns jeitos de fazer uma funcao pra retornar o nome do enum
 // um deles eh esse aqui:
+/*
 char* getOpName(enum Opcode op){
   const char* opNames[] = {"add", "sub", "load", "loadAI", "store", "storeAI"};
   return (char*) opNames[op]; // o cast (char*) eh pra resolver um warning
 }
-
+*/
 
 /* tem esse aqui tbm mas acho q prefiro o de primeiro kkk
 
@@ -111,22 +134,25 @@ int main(){
   ILOC_Node* novo = NULL;
 
   // cria nova lista de istrucoes ILOC
-  list = ilocNewNode(add, "r1", "r2", "r3");
+  list = ilocNewNode(NULL, add, "r1", "r2", "r3");
 
   // adiciona novas instrucoes na lista
-  novo = ilocNewNode(sub, "r4", "r5", "r6");
+  novo = ilocNewNode("L3", sub, "r4", "r5", "r6");
   ilocInsertNode(list, novo);
 
-  novo = ilocNewNode(load, "r1", "r2", NULL);
+  novo = ilocNewNode(NULL, mult, "r4", "r5", "r6");
   ilocInsertNode(list, novo);
 
-  novo = ilocNewNode(store, "r1", "r2", NULL);
+  novo = ilocNewNode(NULL, jumpI, "L1", NULL, NULL);
   ilocInsertNode(list, novo);
 
-  novo = ilocNewNode(loadAI, "r1", "c2", "r3");
+  novo = ilocNewNode(NULL, cbr, "r1", "L2", "L3");
   ilocInsertNode(list, novo);
 
-  novo = ilocNewNode(storeAI, "r1", "c2", "r3");
+  novo = ilocNewNode("L1", loadAI, "r1", "5", "r3");
+  ilocInsertNode(list, novo);
+
+  novo = ilocNewNode("L2", storeAI, "r1", "r6", "1");
   ilocInsertNode(list, novo);
 
   // imrpime lista
